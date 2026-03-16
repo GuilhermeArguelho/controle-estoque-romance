@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('roupas', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('tipo'); // Ex: Calça, Blusa
             $table->string('tamanho'); // Ex: P, M, G, GG
             $table->integer('quantidade_estoque');

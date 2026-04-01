@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class StoreRepasseRequest extends FormRequest
 {
@@ -20,8 +22,20 @@ class StoreRepasseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'vendedora_id' => ['required', 'integer', 'exists:vendedoras,id'],
-            'roupa_id' => ['required', 'integer', 'exists:roupas,id'],
+            'vendedora_id' => [
+                'required',
+                'integer',
+                Rule::exists('vendedoras', 'id')->where(function ($query) {
+                    $query->where('user_id', Auth::id());
+                }),
+            ],
+            'roupa_id' => [
+                'required',
+                'integer',
+                Rule::exists('roupas', 'id')->where(function ($query) {
+                    $query->where('user_id', Auth::id());
+                }),
+            ],
             'quantidade_enviada' => ['required', 'integer', 'min:1'],
             'data_repasse' => ['required', 'date'],
         ];

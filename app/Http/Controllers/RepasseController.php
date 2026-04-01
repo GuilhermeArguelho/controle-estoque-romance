@@ -53,7 +53,9 @@ class RepasseController extends Controller
         } catch (Exception $e) {
             // 4. Se o Service estourou um erro (ex: "Estoque insuficiente"),
             // nós capturamos (catch) e devolvemos o erro para a tela do React.
-            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
+            return redirect()->back()
+                ->withInput()
+                ->with('error', $e->getMessage());
         }
     }
 }

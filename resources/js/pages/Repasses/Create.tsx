@@ -1,8 +1,8 @@
 import { Head, useForm } from '@inertiajs/react';
 import React from 'react';
-
-
-declare function route(name: string, params?: any, absolute?: boolean): string;
+import { route } from 'ziggy-js';
+import AppLayout from '@/layouts/app-layout';
+import type { BreadcrumbItem } from '@/types';
 
 // 1. O CONTRATO DA VENDEDORA
 interface Vendedora {
@@ -24,8 +24,15 @@ interface CreateProps {
     vendedoras: Vendedora[];
 }
 
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Novo Repasse',
+        href: '/repasses/novo',
+    },
+];
+
 export default function Create({ roupas, vendedoras }: CreateProps) {
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, processing, errors, reset } = useForm({
         vendedora_id: '',
         roupa_id: '',
         quantidade_enviada: '',
@@ -34,22 +41,19 @@ export default function Create({ roupas, vendedoras }: CreateProps) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('repasses.store')); 
+        post(route('repasses.store'), {
+            onSuccess: () => {
+                reset();
+            },
+        });
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-10">
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Novo Repasse" />
 
-            <header className="bg-pink-600 shadow-md p-4 sticky top-0 z-10">
-                <h1 className="text-xl font-bold text-white text-center">
-                    Novo Repasse
-                </h1>
-            </header>
-
-            <main className="max-w-md mx-auto mt-6 px-4">
+            <main className="mx-auto mt-6 w-full max-w-md px-4 pb-10">
                 <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm p-5 space-y-6">
-                    
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                             Vendedora
@@ -124,6 +128,6 @@ export default function Create({ roupas, vendedoras }: CreateProps) {
                     </button>
                 </form>
             </main>
-        </div>
+        </AppLayout>
     );
 }
